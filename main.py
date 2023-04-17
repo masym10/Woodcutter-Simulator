@@ -37,21 +37,21 @@ class Tree(GameSprite):
     def life_bar_lvl_1(self):
         if self.hp <= 0:
             self.hp = 0
-            self.reset()
+            self.kill()
 
+money = 1
 class Money_coin(GameSprite):
     def money_update(self):
         global money
-        money = 999
-        if money >= 1000:
-            money = 1000
+        if money >= 10000:
+            money = 10000
 #changes
 FPS = 60
 game = True
 clock = time.Clock()
 #class realese
 player1 = Player("player.png", 350, 375, 100, 50, 2, 1)
-tree_lvl_1 = Tree("Tree_lvl_1.png", 550, 375, 100, 50, 10, 10)
+tree_lvl_1 = Tree("Tree_lvl_2.png", 550, 375, 100, 50, 10, 10)
 gold_coin = Money_coin("gold_icon.png", 575, 0, 25, 25, 1)
 #Text
 font.init()

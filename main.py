@@ -25,9 +25,14 @@ class Player(GameSprite):
     def update(self):
         keys_pressed = key.get_pressed()
         if keys_pressed[K_LEFT] and self.rect.x > 5:
+            self.image = transform.scale(image.load('player_move_L_1.png'), (100, 50))
             self.rect.x -= self.speed
+            self.image = transform.scale(image.load('player_move_L_2.png'), (100, 50))
+
         if keys_pressed[K_RIGHT] and self.rect.x < 700:
+            self.image = transform.scale(image.load('player_move_R_1.png'), (100, 50))
             self.rect.x += self.speed
+            self.image = transform.scale(image.load('player_move_R_2.png'), (100, 50))
 
 class Tree(GameSprite):
     def __init__(self, player_image, x, y, w, h, player_speed, tree_hp):
@@ -85,6 +90,12 @@ while game:
     player1.update()
     tree_lvl_1.life_bar_lvl_1()
     #ifs
+    for e in event.get():
+        for e in event.get():
+            if e.type == pygame.KEYUP:
+                if e.key == K_LEFT or e.key == K_RIGHT:
+                    player1.image = transform.scale(image.load('player.png'), (100, 50))
+
     if sprite.collide_rect(tree_lvl_1, player1):
         tree_lvl_1.hp -= player1.dmg
         money += 1

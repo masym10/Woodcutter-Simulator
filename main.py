@@ -62,7 +62,7 @@ tree_lvl_1 = Tree("Tree_lvl_2.png", 550, 375, 100, 50, 10, 10)
 gold_coin = Money_coin("gold_icon.png", 575, 0, 25, 25, 1)
 #btns
 btn_start = Button(200, 200, 100, 50, "btn_start.png")
-btn_exit = Button(200,200, 100, 50, "btn_exit.png")
+btn_exit = Button(200,250, 100, 50, "btn_exit.png")
 #Text
 font.init()
 font = font.SysFont('Arial', 20)
@@ -86,7 +86,7 @@ while game:
 
     if run:
         #logic game
-        window.fill(255,0,0)
+        window.fill((255,0,0))
         player1.reset()
         tree_lvl_1.reset()
         #money_show
@@ -113,7 +113,7 @@ while game:
 
     else:
         #menu game
-        window.fill(0,0,0)
+        window.fill((0,0,0))
         if btn_start.draw(window):
             run = True
         if btn_exit.draw(window):

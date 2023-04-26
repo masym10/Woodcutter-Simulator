@@ -61,18 +61,21 @@ player1 = Player("player.png", 350, 375, 100, 50, 2, 1)
 tree_lvl_1 = Tree("Tree_lvl_2.png", 550, 375, 100, 50, 10, 10)
 gold_coin = Money_coin("gold_icon.png", 575, 0, 25, 25, 1)
 #btns
-btn_start = Button(200, 200, 100, 50, "btn_start.png")
-btn_exit = Button(200,250, 100, 50, "btn_exit.png")
+btn_start = Button(300, 200, 100, 50, "btn_start.png")
+btn_exit = Button(300, 275, 100, 50, "btn_exit.png")
+btn_sound = Button(650, 450, 100, 50, "btn_sound.png")
+btn_mute = Button(650, 400, 100, 50, "btn_mute.png")
 #Text
 font.init()
 font = font.SysFont('Arial', 20)
 #Background music
 mixer.init()
 mixer.music.load("forest_sounds.ogg")
-mixer.music.play(-1)
 #background
 background_image = image.load('background.jpg')
-background = transform.scale(background_image, (700,500))
+background = transform.scale(background_image, (700, 500))
+background_menu_image = image.load('background_menu.jpg')
+background_menu = transform.scale(background_menu_image, (700, 500))
 #while
 while game:
     #events
@@ -86,7 +89,7 @@ while game:
 
     if run:
         #logic game
-        window.fill((255,0,0))
+        window.blit(background, (0, 0))
         player1.reset()
         tree_lvl_1.reset()
         #money_show
@@ -113,13 +116,20 @@ while game:
 
     else:
         #menu game
-        window.fill((0,0,0))
+        window.blit(background_menu, (0, 0))
         if btn_start.draw(window):
             run = True
+
         if btn_exit.draw(window):
-            run = False
+            game = False
+
+        if btn_sound.draw(window):
+            mixer.music.play(-1)
+
+        if btn_mute.draw(window):
+            mixer.music.pause()
 
 
-    
+            
     display.update()
     clock.tick(FPS)

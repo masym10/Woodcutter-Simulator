@@ -20,10 +20,12 @@ class GameSprite(sprite.Sprite):
         window.blit(self.image, (self.rect.x, self.rect.y))
 
 class Player(GameSprite):
-    def __init__(self, player_image, x, y, w, h, player_speed, dmg):
+    def __init__(self, player_image, x, y, w, h, player_speed, dmg, xp, lvl):
         super().__init__(player_image, x, y, w, h, player_speed)
         self.dmg = dmg
         self.attack = False
+        self.xp = xp
+        self.lvl = lvl
 
     def update(self):
         keys_pressed = key.get_pressed()
@@ -48,9 +50,10 @@ class Player(GameSprite):
             self.attack = True
 
 class Tree(GameSprite):
-    def __init__(self, player_image, x, y, w, h, player_speed, tree_hp):
+    def __init__(self, player_image, x, y, w, h, player_speed, tree_hp, drop_xp):
         super().__init__(player_image, x, y, w, h, player_speed)
         self.hp = tree_hp
+        self.xp = drop_xp
 
     def life_bar_lvl_1(self):
         if self.hp <= 0:
@@ -70,18 +73,25 @@ game = True
 clock = time.Clock()
 run = False
 money = 0
+min_hp = 10
 max_hp = 50
 kill_tree = 0
-max_kill_tree = 5
 max_tree = 5
 money_drop = 5
 cooldown_tracker = 0
-cd = 1200           
+cd = 1000 
+buy = True
+buy2 = True
+buy3 = True
+buy4 = True
+buy5 = True
+buy6 = True
+         
 
 #class realese
-player1 = Player("player_R.png", 350, 375, 100, 50, 2, 1)
+player1 = Player("player_R.png", 350, 375, 100, 50, 2, 1, 0, 1)
 gold_coin = Money_coin("gold_icon.png", 575, 0, 25, 25, 1)
-tree = Tree("Tree_lvl_1.png", 550, 375, 100, 50, 10, 10)
+tree = Tree("Tree_lvl_1.png", 550, 375, 100, 50, 10, 10, 10)
 
 #btns
 btn_start = Button(300, 200, 100, 50, "btn_start.png")
@@ -145,6 +155,10 @@ while game:
         window.blit(hp_text, (550,350))
         kill_tree_text = font.render("Tree:" + str(kill_tree), 1, (255, 0, 0))
         window.blit(kill_tree_text, (580, 50))
+        xp_txt = font.render("Xp:" + str(player1.xp), 1, (255, 255, 0))
+        window.blit(xp_txt, (580, 70))
+        lvl_txt = font.render("lvl:" + str(player1.lvl), 1, (0, 255, 0))
+        window.blit(lvl_txt, (580, 90))
 
         player1.update()
         tree.life_bar_lvl_1()
@@ -153,16 +167,73 @@ while game:
             if sprite.collide_rect(player1, tree):
                 tree.hp -= player1.dmg
                 player1.attack = False
+            #lvl uping system
+            if player1.xp >= 250:
+                player1.lvl = 2
+                player1.dmg += 2
+                cd -= 100
+
+            if player1.xp >= 750:
+                player1.lvl = 3
+                player1.dmg += 3
+                cd -= 100
+
+            if player1.xp >= 1250:
+                player1.lvl = 4
+                player1.dmg += 4
+                cd -= 100
+
+            if player1.xp >= 1750:
+                player1.lvl = 5
+                player1.dmg += 5
+                cd -= 100
+
+            if player1.xp >= 2250:
+                player1.lvl = 6
+                player1.dmg += 6
+                cd -= 100
+
+            if player1.xp >= 2750:
+                player1.lvl = 7
+                player1.dmg += 7
+                cd -= 100
+
+            if player1.xp >= 3250:
+                player1.lvl = 8
+                player1.dmg += 8
+                cd -= 50
+
+            if player1.xp >= 3750:
+                player1.lvl = 9
+                player1.dmg += 9
+                cd -= 50
+
+            if player1.xp >= 4250:
+                player1.lvl = 10
+                player1.dmg += 10
+                cd -= 50
+
+            if player1.xp >= 4750:
+                player1.lvl = 11
+                player1.dmg += 11
+                cd -= 50
+                
+            if player1.xp >= 5250:
+                player1.lvl = 12
+                player1.dmg += 12
+                cd -= 50
+
+            if player1.xp >= 5750:
+                player1.lvl = 13
+                player1.dmg += 13
+                cd -= 50
+
         else:
             player1.image = transform.scale(image.load('player_R.png'), (100, 50))
 
         if tree.hp <= 0:
             now_tree = randint(1, max_tree)
             kill_tree += 1
-            if kill_tree == max_kill_tree:
-                note_text = font.render("You need buy new axe.", 1, (255, 0, 0))
-                window.blit(note_text, (350, 250))
-                cooldown_tracker = 99999
                 
             if now_tree == 1:
                 tree.image = transform.scale(image.load('Tree_lvl_1.png'), (100, 50))
@@ -175,94 +246,138 @@ while game:
             if now_tree == 5:
                 tree.image = transform.scale(image.load('Tree_lvl_5.png'), (100, 50))
 
+            tree.xp += 10
+            min_hp += 5
             max_hp += 10 
-            tree.hp = randint(10, max_hp)
+            tree.hp = randint(min_hp, max_hp)
             money += money_drop
-
+            player1.xp += tree.xp
+        #shop button
         if btn_shop.draw(window):
             open = True
         #shop interface
         if open == True:
             if btn_buy.draw(window):
-                if money >= 25:
-                    player1.dmg += 2
-                    player_axe_images.remove("player_axe_lvl_1.png")
-                    money -= 25
-                    kill_tree = 0
-                    if player1.image == "player_level_axe_2":
-                        cooldown_tracker = 0
+                if buy == True:
+                    if money >= 25 and player1.lvl == 2:
+                        player1.dmg += 2
+                        player_axe_images.remove("player_axe_lvl_1.png")
+                        money -= 25
+                        kill_tree = 0
+                        buy = False
+                    else:
+                        money1 = money
+                        need_money = money - 25
+                        error_buy = font.render(f"You dont have need money " + str(need_money) + "and you need lvl 2", 1, (255, 0, 0))
+                        window.blit(error_buy, (200, 200))
+
                 else:
-                    money1 = money
-                    need_money = money - 25
-                    error_buy = font.render(f"You dont have need money " + str(need_money), 1, (255, 0, 0))
-                    window.blit(error_buy, (200, 200))
+                    selled = font.render("You have already bought this item", 1, (255,0,0))  
+                    window.blit(selled, (200, 200))
 
             if btn_buy2.draw(window):
-                if money >= 250:
-                    cd = 1100
-                    player1.dmg += 5
-                    player_axe_images.remove("player_axe_lvl_2.png")
-                    money -= 250
-                    kill_tree = 0
+                if buy2 == True:
+                    
+                    if money >= 250:
+                        cd = 1100
+                        player1.dmg += 5
+                        player_axe_images.remove("player_axe_lvl_2.png")
+                        money -= 250
+                        kill_tree = 0
+                        buy2 = False
+
+                    else:
+                        money2 = money
+                        need_money2 = money - 250
+                        error_buy2 = font.render(f"You dont have need money " + str(need_money2) + "and you need lvl 3", 1, (255, 0, 0))
+                        window.blit(error_buy2, (200, 200))
 
                 else:
-                    money2 = money
-                    need_money2 = money - 250
-                    error_buy2 = font.render(f"You dont have need money " + str(need_money2), 1, (255, 0, 0))
-                    window.blit(error_buy2, (200, 200))
-            
+                    selled = font.render("You have already bought this item", 1, (255,0,0))  
+                    window.blit(selled, (200, 200))
+
             if btn_buy3.draw(window):
-                if money >= 500:
-                    cd = 1000
-                    player1.dmg += 8
-                    player_axe_images.remove("player_axe_lvl_3.png")
-                    money -= 500
-                    kill_tree = 0
+                if buy3 == True:
+
+                    if money >= 500:
+                        cd = 1000
+                        player1.dmg += 8
+                        player_axe_images.remove("player_axe_lvl_3.png")
+                        money -= 500
+                        kill_tree = 0
+                        buy3 = False
+
+                    else:
+                        money1 = money
+                        need_money3 = money - 500
+                        error_buy3 = font.render(f"You dont have need money " + str(need_money3) + "and you need lvl 4", 1, (255, 0, 0))
+                        window.blit(error_buy3, (200, 200))
+
                 else:
-                    money1 = money
-                    need_money3 = money - 500
-                    error_buy3 = font.render(f"You dont have need money " + str(need_money3), 1, (255, 0, 0))
-                    window.blit(error_buy3, (200, 200))
+                    selled = font.render("You have already bought this item", 1, (255,0,0))  
+                    window.blit(selled, (200, 200))
 
             if btn_buy4.draw(window):
-                if money >= 750:
-                    cd = 900
-                    player1.dmg += 11
-                    player_axe_images.remove("player_axe_lvl_4.png")
-                    money -= 750
-                    kill_tree = 0
+                if buy4 == True:
+
+                    if money >= 750:
+                        cd = 900
+                        player1.dmg += 11
+                        player_axe_images.remove("player_axe_lvl_4.png")
+                        money -= 750
+                        kill_tree = 0
+                        buy4 = False
+
+                    else:
+                        money4 = money
+                        need_money4 = money - 750
+                        error_buy4 = font.render(f"You dont have need money " + str(need_money4) + "and you need lvl 5", 1, (255, 0, 0))
+                        window.blit(error_buy4, (200, 200))
+
                 else:
-                    money4 = money
-                    need_money4 = money - 750
-                    error_buy4 = font.render(f"You dont have need money " + str(need_money4), 1, (255, 0, 0))
-                    window.blit(error_buy4, (200, 200))
+                    selled = font.render("You have already bought this item", 1, (255,0,0))  
+                    window.blit(selled, (200, 200))
 
             if btn_buy5.draw(window):
-                if money >= 1000:
-                    cd = 800
-                    player1.dmg += 15
-                    player_axe_images.remove("player_axe_lvl_5.png")
-                    money -= 1000
-                    kill_tree = 0
+                if buy5 == True:
+                    if money >= 1000:
+                        cd = 800
+                        player1.dmg += 15
+                        player_axe_images.remove("player_axe_lvl_5.png")
+                        money -= 1000
+                        kill_tree = 0
+                        buy5 = False
+
+                    else:
+                        money5 = money
+                        need_money = money - 1000
+                        error_buy5 = font.render(f"You dont have need money " + str(need_money) + "and you need lvl 6", 1, (255, 0, 0))
+                        window.blit(error_buy5, (200, 200))
+
                 else:
-                    money5 = money
-                    need_money = money - 1000
-                    error_buy5 = font.render(f"You dont have need money " + str(need_money), 1, (255, 0, 0))
-                    window.blit(error_buy5, (200, 200))
+                    selled = font.render("You have already bought this item", 1, (255,0,0))  
+                    window.blit(selled, (200, 200))
 
             if btn_buy6.draw(window):
-                if money >= 2500:
-                    cd = 400
-                    player1.dmg += 30
-                    player_axe_images.remove("player_axe_lvl_5.png")
-                    money -= 2500
-                    kill_tree = 0
-                else:
-                    money6 = money
-                    need_money = money - 2500
-                    error_buy6 = font.render(f"You dont have need money " + str(need_money), 1, (255, 0, 0))
-                    window.blit(error_buy6, (200, 200))
+                if buy6 == True:
 
+                    if money >= 2500:
+                        cd = 400
+                        player1.dmg += 30
+                        player_axe_images.remove("player_axe_lvl_6.png")
+                        money -= 2500
+                        kill_tree = 0
+                        buy6 = True
+
+                    else:
+                        money6 = money
+                        need_money = money - 2500
+                        error_buy6 = font.render(f"You dont have need money " + str(need_money) + "and you need lvl 7", 1, (255, 0, 0))
+                        window.blit(error_buy6, (200, 200))
+
+                else:
+                    selled = font.render("You have already bought this item", 1, (255,0,0))  
+                    window.blit(selled, (200, 200))
 
             if btn_close.draw(window):
                 open =False

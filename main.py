@@ -99,13 +99,13 @@ btn_exit = Button(300, 275, 100, 50, "btn_exit.png")
 btn_sound = Button(650, 450, 100, 50, "btn_sound.png")
 btn_mute = Button(650, 400, 100, 50, "btn_mute.png")
 btn_shop = Button(70, 50, 50, 25, "btn_shop.png")
-btn_buy =  Button(200, 50, 50, 25, "btn_buy.png")
-btn_buy2 = Button(400, 50, 50, 25, "btn_buy.png.")
-btn_buy3 = Button(200, 100, 50, 25, "btn_buy.png.")
-btn_buy4 = Button(400, 100, 50, 25, "btn_buy.png.")
-btn_buy5 = Button(200, 150, 50, 25, "btn_buy.png.")
-btn_buy6 = Button(400, 150, 50, 25, "btn_buy.png.")
+btn_buy =  Button(200, 50, 50, 25, "axe_lvl_2.png")
+btn_buy2 = Button(400, 50, 50, 25, "axe_lvl_3.png.")
+btn_buy3 = Button(200, 100, 50, 25, "axe_lvl_4.png.")
+btn_buy4 = Button(400, 100, 50, 25, "axe_lvl_5.png.")
+btn_buy5 = Button(200, 150, 50, 25, "axe_lvl_6.png.")
 btn_close = Button(5, 5, 50, 25, "btn_close.png")
+btn_lvl_1 = Button(650, 100, 50, 25, 'btn_lvl_1.png')
 
 #Text
 font.init()
@@ -168,62 +168,74 @@ while game:
                 tree.hp -= player1.dmg
                 player1.attack = False
             #lvl uping system
-            if player1.xp >= 250:
+            if player1.xp >= 200:
+                player1.xp = 0
                 player1.lvl = 2
                 player1.dmg += 2
                 cd -= 100
 
             if player1.xp >= 750:
+                player1.xp = 0
                 player1.lvl = 3
                 player1.dmg += 3
                 cd -= 100
 
             if player1.xp >= 1250:
+                player1.xp = 0
                 player1.lvl = 4
                 player1.dmg += 4
                 cd -= 100
 
             if player1.xp >= 1750:
+                player1.xp = 0
                 player1.lvl = 5
                 player1.dmg += 5
-                cd -= 100
+                cd -= 50
 
             if player1.xp >= 2250:
+                player1.xp = 0
                 player1.lvl = 6
                 player1.dmg += 6
-                cd -= 100
+                cd -= 50
 
             if player1.xp >= 2750:
+                player1.xp = 0
                 player1.lvl = 7
                 player1.dmg += 7
-                cd -= 100
+                cd -= 50
 
             if player1.xp >= 3250:
+                player1.xp = 0
                 player1.lvl = 8
                 player1.dmg += 8
                 cd -= 50
 
             if player1.xp >= 3750:
+                player1.xp = 0
                 player1.lvl = 9
                 player1.dmg += 9
                 cd -= 50
 
             if player1.xp >= 4250:
+                player1.xp = 0
                 player1.lvl = 10
                 player1.dmg += 10
                 cd -= 50
 
             if player1.xp >= 4750:
+                player1.xp = 0
                 player1.lvl = 11
                 player1.dmg += 11
                 cd -= 50
                 
             if player1.xp >= 5250:
+                player1.xp = 0
                 player1.lvl = 12
                 player1.dmg += 12
                 cd -= 50
 
             if player1.xp >= 5750:
+                player1.xp = 0
                 player1.lvl = 13
                 player1.dmg += 13
                 cd -= 50
@@ -246,7 +258,7 @@ while game:
             if now_tree == 5:
                 tree.image = transform.scale(image.load('Tree_lvl_5.png'), (100, 50))
 
-            tree.xp += 10
+            tree.xp = 10
             min_hp += 5
             max_hp += 10 
             tree.hp = randint(min_hp, max_hp)
@@ -358,30 +370,11 @@ while game:
                     selled = font.render("You have already bought this item", 1, (255,0,0))  
                     window.blit(selled, (200, 200))
 
-            if btn_buy6.draw(window):
-                if buy6 == True:
-
-                    if money >= 2500:
-                        cd = 400
-                        player1.dmg += 30
-                        player_axe_images.remove("player_axe_lvl_6.png")
-                        money -= 2500
-                        kill_tree = 0
-                        buy6 = True
-
-                    else:
-                        money6 = money
-                        need_money = money - 2500
-                        error_buy6 = font.render(f"You dont have need money " + str(need_money) + "and you need lvl 7", 1, (255, 0, 0))
-                        window.blit(error_buy6, (200, 200))
-
-                else:
-                    selled = font.render("You have already bought this item", 1, (255,0,0))  
-                    window.blit(selled, (200, 200))
-
             if btn_close.draw(window):
                 open =False
-                
+
+        if btn_lvl_1.draw(window):
+            print("ok")    
     else:
         #menu game
         window.blit(background_menu, (0, 0))

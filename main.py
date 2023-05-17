@@ -86,6 +86,12 @@ buy3 = True
 buy4 = True
 buy5 = True
 buy6 = True
+lvl_unlocked = False
+time_kill_boss = 0
+tree_xp_lvl = 10
+min_hp_lvl = 5
+max_hp_lvl = 10
+money_drop_lvl = 5 
          
 
 #class realese
@@ -105,7 +111,12 @@ btn_buy3 = Button(200, 100, 50, 25, "axe_lvl_4.png.")
 btn_buy4 = Button(400, 100, 50, 25, "axe_lvl_5.png.")
 btn_buy5 = Button(200, 150, 50, 25, "axe_lvl_6.png.")
 btn_close = Button(5, 5, 50, 25, "btn_close.png")
-btn_lvl_1 = Button(650, 100, 50, 25, 'btn_lvl_1.png')
+btn_lvl_1 = Button(580, 120, 20, 20, 'btn_lvl_1.png')
+btn_lvl_2 = Button(600, 120, 20, 20, 'btn_lvl_2.png')
+btn_lvl_3 = Button(620, 120, 20, 20,  'btn_lvl_3.png')
+btn_lvl_4 = Button(640, 120, 20, 20, 'btn_lvl_4.png')
+btn_lvl_5 = Button(660, 120, 20, 20, 'btn_lvl_5.png')
+btn_lvl_boss = Button(680, 120, 20, 20, 'btn_lvl_boss.png')
 
 #Text
 font.init()
@@ -171,74 +182,63 @@ while game:
             if player1.xp >= 200:
                 player1.xp = 0
                 player1.lvl = 2
-                player1.dmg += 2
-                cd -= 100
+                player1.dmg = 2
 
             if player1.xp >= 750:
                 player1.xp = 0
                 player1.lvl = 3
-                player1.dmg += 3
-                cd -= 100
+                player1.dmg += 2
 
             if player1.xp >= 1250:
                 player1.xp = 0
                 player1.lvl = 4
-                player1.dmg += 4
-                cd -= 100
+                player1.dmg += 3
 
             if player1.xp >= 1750:
                 player1.xp = 0
                 player1.lvl = 5
-                player1.dmg += 5
+                player1.dmg += 4
                 cd -= 50
 
             if player1.xp >= 2250:
                 player1.xp = 0
                 player1.lvl = 6
-                player1.dmg += 6
-                cd -= 50
+                player1.dmg += 5
 
             if player1.xp >= 2750:
                 player1.xp = 0
                 player1.lvl = 7
-                player1.dmg += 7
-                cd -= 50
+                player1.dmg += 5
 
             if player1.xp >= 3250:
                 player1.xp = 0
                 player1.lvl = 8
-                player1.dmg += 8
-                cd -= 50
+                player1.dmg += 5
 
             if player1.xp >= 3750:
                 player1.xp = 0
                 player1.lvl = 9
-                player1.dmg += 9
-                cd -= 50
+                player1.dmg += 5
 
             if player1.xp >= 4250:
                 player1.xp = 0
                 player1.lvl = 10
-                player1.dmg += 10
-                cd -= 50
+                player1.dmg += 5
 
             if player1.xp >= 4750:
                 player1.xp = 0
                 player1.lvl = 11
-                player1.dmg += 11
-                cd -= 50
+                player1.dmg += 5
                 
             if player1.xp >= 5250:
                 player1.xp = 0
                 player1.lvl = 12
-                player1.dmg += 12
-                cd -= 50
+                player1.dmg += 5
 
             if player1.xp >= 5750:
                 player1.xp = 0
                 player1.lvl = 13
-                player1.dmg += 13
-                cd -= 50
+                player1.dmg += 5
 
         else:
             player1.image = transform.scale(image.load('player_R.png'), (100, 50))
@@ -246,7 +246,7 @@ while game:
         if tree.hp <= 0:
             now_tree = randint(1, max_tree)
             kill_tree += 1
-                
+            #texture trees  randomizes  
             if now_tree == 1:
                 tree.image = transform.scale(image.load('Tree_lvl_1.png'), (100, 50))
             if now_tree == 2:
@@ -258,12 +258,14 @@ while game:
             if now_tree == 5:
                 tree.image = transform.scale(image.load('Tree_lvl_5.png'), (100, 50))
 
-            tree.xp = 10
-            min_hp += 5
-            max_hp += 10 
-            tree.hp = randint(min_hp, max_hp)
-            money += money_drop
+            #tree settings drop
+            tree.xp = tree_xp_lvl
+            max_hp_lvl += 5
+            max_hp_lvl += 5
+            tree.hp = randint(min_hp_lvl, max_hp_lvl)
+            money += money_drop_lvl
             player1.xp += tree.xp
+
         #shop button
         if btn_shop.draw(window):
             open = True
@@ -374,7 +376,22 @@ while game:
                 open =False
 
         if btn_lvl_1.draw(window):
-            print("ok")    
+            tree_xp_lvl = 10
+            min_hp_lvl = 5
+            max_hp_lvl = 10
+            money_drop_lvl = 5
+
+        if btn_lvl_2.draw(window):
+            if kill_tree >= 20:
+                tree_xp_lvl = 15
+                min_hp_lvl = 10
+                max_hp_lvl = 20
+                money_drop_lvl = 15
+
+            else:
+                error2 = font.render('You not unlocked this lvl.You must kill 20 trees', 1, (255, 0, 0))
+                window.blit(error2, (200, 200))
+
     else:
         #menu game
         window.blit(background_menu, (0, 0))

@@ -78,6 +78,7 @@ max_hp = 50
 kill_tree = 0
 max_tree = 5
 money_drop = 5
+time_kill_boss_tracker = 0
 cooldown_tracker = 0
 cd = 1000 
 buy = True
@@ -184,58 +185,58 @@ while game:
                 player1.lvl = 2
                 player1.dmg = 2
 
-            if player1.xp >= 750:
+            if player1.xp >= 450:
                 player1.xp = 0
                 player1.lvl = 3
                 player1.dmg += 2
 
-            if player1.xp >= 1250:
+            if player1.xp >= 650:
                 player1.xp = 0
                 player1.lvl = 4
                 player1.dmg += 3
 
-            if player1.xp >= 1750:
+            if player1.xp >= 850:
                 player1.xp = 0
                 player1.lvl = 5
                 player1.dmg += 4
                 cd -= 50
 
-            if player1.xp >= 2250:
+            if player1.xp >= 1050:
                 player1.xp = 0
                 player1.lvl = 6
                 player1.dmg += 5
 
-            if player1.xp >= 2750:
+            if player1.xp >= 1250:
                 player1.xp = 0
                 player1.lvl = 7
                 player1.dmg += 5
 
-            if player1.xp >= 3250:
+            if player1.xp >= 1450:
                 player1.xp = 0
                 player1.lvl = 8
                 player1.dmg += 5
 
-            if player1.xp >= 3750:
+            if player1.xp >= 1650:
                 player1.xp = 0
                 player1.lvl = 9
                 player1.dmg += 5
 
-            if player1.xp >= 4250:
+            if player1.xp >= 1850:
                 player1.xp = 0
                 player1.lvl = 10
                 player1.dmg += 5
 
-            if player1.xp >= 4750:
+            if player1.xp >= 2050:
                 player1.xp = 0
                 player1.lvl = 11
                 player1.dmg += 5
                 
-            if player1.xp >= 5250:
+            if player1.xp >= 2250:
                 player1.xp = 0
                 player1.lvl = 12
                 player1.dmg += 5
 
-            if player1.xp >= 5750:
+            if player1.xp >= 2450:
                 player1.xp = 0
                 player1.lvl = 13
                 player1.dmg += 5
@@ -335,7 +336,6 @@ while game:
                 if buy4 == True:
 
                     if money >= 750:
-                        cd = 900
                         player1.dmg += 11
                         player_axe_images.remove("player_axe_lvl_4.png")
                         money -= 750
@@ -389,8 +389,62 @@ while game:
                 money_drop_lvl = 15
 
             else:
-                error2 = font.render('You not unlocked this lvl.You must kill 20 trees', 1, (255, 0, 0))
-                window.blit(error2, (200, 200))
+                error_lvl_2 = font.render('You not unlocked this lvl.You must kill 20 trees', 1, (255, 0, 0))
+                window.blit(error_lvl_2, (200, 200))
+
+        if btn_lvl_3.draw(window):
+            if kill_tree >= 40:
+                tree_xp_lvl = 30
+                min_hp_lvl = 15
+                max_hp_lvl = 25
+                money_drop_lvl = 20
+
+            else:
+                error_lvl_3 = font.render('You not unlocked this lvl.You must kill 40 trees', 1, (255, 0, 0))
+                window.blit(error_lvl_3, (200, 200))
+
+        if btn_lvl_4.draw(window):
+            if kill_tree >= 60:
+                tree_xp_lvl = 60
+                min_hp_lvl = 25
+                max_hp_lvl = 30
+                money_drop_lvl = 30
+
+            else:
+                error_lvl_4 = font.render('You not unlocked this lvl.You must kill 60 trees', 1, (255, 0, 0))
+                window.blit(error_lvl_4, (200, 200))
+
+        if btn_lvl_5.draw(window):
+            if kill_tree >= 80:
+                tree_xp_lvl = 70
+                min_hp_lvl = 35
+                max_hp_lvl = 50
+                money_drop_lvl = 50
+
+            else:
+                error_lvl_5 = font.render('You not unlocked this lvl.You must kill 80 trees', 1, (255, 0, 0))
+                window.blit(error_lvl_5, (200, 200))
+
+        if btn_lvl_boss.draw(window):
+            if kill_tree >= 100:
+                tree_xp_lvl = 350
+                min_hp_lvl = 500
+                max_hp_lvl = 1500
+                money_drop_lvl = 500
+
+            else:
+                error_lvl_boss = font.render('You not unlocked this lvl.You must kill 100 trees', 1, (255, 0, 0))
+                window.blit(error_lvl_boss, (200, 200))
+
+            time_kill_boss_tracker += clock.get_time()
+
+            if time_kill_boss_tracker > 5000:
+                time_kill_boss_tracker = 0
+                if tree_xp >= 0:
+                    game_over = font.render('You losse', 1, (255, 0, 0))
+                    window.blit(game_over, (200, 200))
+                    time.sleep(5)
+                    game = False
 
     else:
         #menu game

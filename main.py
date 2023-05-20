@@ -60,7 +60,6 @@ class Tree(GameSprite):
             self.hp = 0
             global max_hp
 
-
 class Money_coin(GameSprite):
     def money_update(self):
         global money
@@ -80,7 +79,7 @@ max_tree = 5
 money_drop = 5
 time_kill_boss_tracker = 0
 cooldown_tracker = 0
-cd = 1000 
+cd = 500 
 buy = True
 buy2 = True
 buy3 = True
@@ -94,7 +93,6 @@ min_hp_lvl = 5
 max_hp_lvl = 10
 money_drop_lvl = 5 
          
-
 #class realese
 player1 = Player("player_R.png", 350, 375, 100, 50, 2, 1, 0, 1)
 gold_coin = Money_coin("gold_icon.png", 575, 0, 25, 25, 1)
@@ -180,63 +178,63 @@ while game:
                 tree.hp -= player1.dmg
                 player1.attack = False
             #lvl uping system
-            if player1.xp >= 200:
+            if player1.xp >= 200 and player1.lvl != 2:
                 player1.xp = 0
                 player1.lvl = 2
-                player1.dmg = 2
+                player1.dmg += 2
 
-            if player1.xp >= 450:
+            if player1.xp >= 450 and player1.lvl != 3:
                 player1.xp = 0
                 player1.lvl = 3
                 player1.dmg += 2
 
-            if player1.xp >= 650:
+            if player1.xp >= 650 and player1.lvl != 4:
                 player1.xp = 0
                 player1.lvl = 4
                 player1.dmg += 3
 
-            if player1.xp >= 850:
+            if player1.xp >= 850 and player1.lvl != 5:
                 player1.xp = 0
                 player1.lvl = 5
                 player1.dmg += 4
                 cd -= 50
 
-            if player1.xp >= 1050:
+            if player1.xp >= 1050 and player1.lvl != 6:
                 player1.xp = 0
                 player1.lvl = 6
                 player1.dmg += 5
 
-            if player1.xp >= 1250:
+            if player1.xp >= 1250 and player1.lvl != 7:
                 player1.xp = 0
                 player1.lvl = 7
                 player1.dmg += 5
 
-            if player1.xp >= 1450:
+            if player1.xp >= 1450 and player1.lvl != 8:
                 player1.xp = 0
                 player1.lvl = 8
                 player1.dmg += 5
 
-            if player1.xp >= 1650:
+            if player1.xp >= 1650 and player1.lvl != 9:
                 player1.xp = 0
                 player1.lvl = 9
                 player1.dmg += 5
 
-            if player1.xp >= 1850:
+            if player1.xp >= 1850 and player1.lvl != 10: 
                 player1.xp = 0
                 player1.lvl = 10
                 player1.dmg += 5
 
-            if player1.xp >= 2050:
+            if player1.xp >= 2050 and player1.lvl != 11:
                 player1.xp = 0
                 player1.lvl = 11
                 player1.dmg += 5
                 
-            if player1.xp >= 2250:
+            if player1.xp >= 2250 and player1.lvl != 12: 
                 player1.xp = 0
                 player1.lvl = 12
                 player1.dmg += 5
 
-            if player1.xp >= 2450:
+            if player1.xp >= 2450 and player1.lvl != 13:
                 player1.xp = 0
                 player1.lvl = 13
                 player1.dmg += 5
@@ -445,6 +443,9 @@ while game:
                     window.blit(game_over, (200, 200))
                     time.sleep(5)
                     game = False
+            
+            lvl_boss_time = font.render('Time kill boss:' + str(time_kill_boss_tracker), 1, (255, 0, 0))
+            window.blit(lvl_boss_time, (200, 200))
 
     else:
         #menu game

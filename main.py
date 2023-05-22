@@ -6,6 +6,7 @@ from random import randint
 #window
 window = display.set_mode((700,500))
 display.set_caption("Woodcutter-Simulator")
+
 #class
 class GameSprite(sprite.Sprite):
     def __init__(self, player_image, x, y, w, h, player_speed):
@@ -30,11 +31,11 @@ class Player(GameSprite):
     def update(self):
         keys_pressed = key.get_pressed()
         if keys_pressed[K_LEFT] and self.rect.x > 5:
-            self.image = transform.scale(image.load('player_L.png'), (100, 50))
+            self.image = transform.scale(image.load('images/player_L.png'), (100, 50))
             self.rect.x -= self.speed
 
         if keys_pressed[K_RIGHT] and self.rect.x < 700:
-            self.image = transform.scale(image.load('player_R.png'), (100, 50))
+            self.image = transform.scale(image.load('images/player_R.png'), (100, 50))
             self.rect.x += self.speed
 
     def attack_axe(self):
@@ -48,12 +49,15 @@ class Player(GameSprite):
         if keys_pressed[K_SPACE] and cooldown_tracker == 0:
             self.image = transform.scale(image.load(player_axe_images[0]), (100, 50))
             self.attack = True
+            mixer.music.load('sounds/Axe_Hit.ogg')
+            mixer.music.play(1)
 
 class Tree(GameSprite):
     def __init__(self, player_image, x, y, w, h, player_speed, tree_hp, drop_xp):
         super().__init__(player_image, x, y, w, h, player_speed)
         self.hp = tree_hp
         self.xp = drop_xp
+        self.kill_boss = False
 
     def life_bar_lvl_1(self):
         if self.hp <= 0:
@@ -91,31 +95,35 @@ time_kill_boss = 0
 tree_xp_lvl = 10
 min_hp_lvl = 5
 max_hp_lvl = 10
-money_drop_lvl = 5 
+money_drop_lvl = 5
+lvl_counter = 0
+max_xp_lvl = 200
+#if for time spawn for boss
+last_life = False
          
 #class realese
-player1 = Player("player_R.png", 350, 375, 100, 50, 2, 1, 0, 1)
-gold_coin = Money_coin("gold_icon.png", 575, 0, 25, 25, 1)
-tree = Tree("Tree_lvl_1.png", 550, 375, 100, 50, 10, 10, 10)
+player1 = Player("images/player_R.png", 350, 375, 100, 50, 2, 1, 0, 1)
+gold_coin = Money_coin("images/gold_icon.png", 575, 0, 25, 25, 1)
+tree = Tree("images/Tree_lvl_1.png", 550, 375, 100, 50, 10, 10, 10)
 
 #btns
-btn_start = Button(300, 200, 100, 50, "btn_start.png")
-btn_exit = Button(300, 275, 100, 50, "btn_exit.png")
-btn_sound = Button(650, 450, 100, 50, "btn_sound.png")
-btn_mute = Button(650, 400, 100, 50, "btn_mute.png")
-btn_shop = Button(70, 50, 50, 25, "btn_shop.png")
-btn_buy =  Button(200, 50, 50, 25, "axe_lvl_2.png")
-btn_buy2 = Button(400, 50, 50, 25, "axe_lvl_3.png.")
-btn_buy3 = Button(200, 100, 50, 25, "axe_lvl_4.png.")
-btn_buy4 = Button(400, 100, 50, 25, "axe_lvl_5.png.")
-btn_buy5 = Button(200, 150, 50, 25, "axe_lvl_6.png.")
-btn_close = Button(5, 5, 50, 25, "btn_close.png")
-btn_lvl_1 = Button(580, 120, 20, 20, 'btn_lvl_1.png')
-btn_lvl_2 = Button(600, 120, 20, 20, 'btn_lvl_2.png')
-btn_lvl_3 = Button(620, 120, 20, 20,  'btn_lvl_3.png')
-btn_lvl_4 = Button(640, 120, 20, 20, 'btn_lvl_4.png')
-btn_lvl_5 = Button(660, 120, 20, 20, 'btn_lvl_5.png')
-btn_lvl_boss = Button(680, 120, 20, 20, 'btn_lvl_boss.png')
+btn_start = Button(300, 200, 100, 50, "images/btn_start.png")
+btn_exit = Button(300, 275, 100, 50, "images/btn_exit.png")
+btn_sound = Button(650, 450, 100, 50, "images/btn_sound.png")
+btn_mute = Button(650, 400, 100, 50, "images/btn_mute.png")
+btn_shop = Button(70, 50, 50, 25, "images/btn_shop.png")
+btn_buy =  Button(200, 50, 50, 25, "images/axe_lvl_2.png")
+btn_buy2 = Button(400, 50, 50, 25, "images/axe_lvl_3.png.")
+btn_buy3 = Button(200, 100, 50, 25, "images/axe_lvl_4.png.")
+btn_buy4 = Button(400, 100, 50, 25, "images/axe_lvl_5.png.")
+btn_buy5 = Button(200, 150, 50, 25, "images/axe_lvl_6.png.")
+btn_close = Button(5, 5, 50, 25, "images/btn_close.png")
+btn_lvl_1 = Button(580, 120, 20, 20, 'images/btn_lvl_1.png')
+btn_lvl_2 = Button(600, 120, 20, 20, 'images/btn_lvl_2.png')
+btn_lvl_3 = Button(620, 120, 20, 20,  'images/btn_lvl_3.png')
+btn_lvl_4 = Button(640, 120, 20, 20, 'images/btn_lvl_4.png')
+btn_lvl_5 = Button(660, 120, 20, 20, 'images/btn_lvl_5.png')
+btn_lvl_boss = Button(680, 120, 20, 20, 'images/btn_lvl_boss.png')
 
 #Text
 font.init()
@@ -123,17 +131,18 @@ font = font.SysFont('Arial', 20)
 
 #Background music
 mixer.init()
-mixer.music.load("forest_sounds.ogg")
+mixer.music.load("sounds/forest_sounds.ogg")
 
 #background
-background_image = image.load('background.jpg')
+background_image = image.load('images/background.jpg')
 background = transform.scale(background_image, (700, 500))
-background_menu_image = image.load('background_menu.jpg')
+background_menu_image = image.load('images/background_menu.jpg')
 background_menu = transform.scale(background_menu_image, (700, 500))
 #player settings
 player_axe_images = [
-    "player_axe_lvl_1.png", "player_axe_lvl_2.png", "player_axe_lvl_3.png", "player_axe_lvl_4.png", "player_axe_lvl_5.png",
-    "player_axe_lvl_6.png"
+    "images/player_axe_lvl_1.png", "images/player_axe_lvl_2.png", 
+    "images/player_axe_lvl_3.png", "images/player_axe_lvl_4.png", 
+    "images/player_axe_lvl_5.png","images/player_axe_lvl_6.png"
     ]
 
 #while
@@ -178,84 +187,109 @@ while game:
                 tree.hp -= player1.dmg
                 player1.attack = False
             #lvl uping system
-            if player1.xp >= 200 and player1.lvl != 2:
-                player1.xp = 0
-                player1.lvl = 2
-                player1.dmg += 2
+            if player1.xp >= max_xp_lvl and player1.lvl != 2:
+                if player1.lvl < 2:
+                    player1.dmg += 2
+                    player1.lvl = 2
+                    player1.xp = 0
+                    max_xp_lvl += 200
 
-            if player1.xp >= 450 and player1.lvl != 3:
-                player1.xp = 0
-                player1.lvl = 3
-                player1.dmg += 2
+            if player1.xp >= max_xp_lvl and player1.lvl != 3:
+                if player1.lvl < 3:
+                    player1.lvl = 3
+                    player1.dmg += 2
+                    player1.xp = 0
+                    max_xp_lvl += 200
 
-            if player1.xp >= 650 and player1.lvl != 4:
-                player1.xp = 0
-                player1.lvl = 4
-                player1.dmg += 3
+            if player1.xp >= max_xp_lvl and player1.lvl != 4:
+                if player1.lvl < 4:
+                    player1.lvl = 4
+                    player1.dmg += 3
+                    player1.xp = 0
+                    max_xp_lvl += 200
 
-            if player1.xp >= 850 and player1.lvl != 5:
-                player1.xp = 0
-                player1.lvl = 5
-                player1.dmg += 4
-                cd -= 50
+            if player1.xp >= max_xp_lvl and player1.lvl != 5:
+                if player1.lvl < 5:
+                    player1.lvl = 5
+                    player1.dmg += 4
+                    player1.xp = 0
+                    max_xp_lvl += 200
 
-            if player1.xp >= 1050 and player1.lvl != 6:
-                player1.xp = 0
-                player1.lvl = 6
-                player1.dmg += 5
-
-            if player1.xp >= 1250 and player1.lvl != 7:
-                player1.xp = 0
-                player1.lvl = 7
-                player1.dmg += 5
-
-            if player1.xp >= 1450 and player1.lvl != 8:
-                player1.xp = 0
-                player1.lvl = 8
-                player1.dmg += 5
-
-            if player1.xp >= 1650 and player1.lvl != 9:
-                player1.xp = 0
-                player1.lvl = 9
-                player1.dmg += 5
-
-            if player1.xp >= 1850 and player1.lvl != 10: 
-                player1.xp = 0
-                player1.lvl = 10
-                player1.dmg += 5
-
-            if player1.xp >= 2050 and player1.lvl != 11:
-                player1.xp = 0
-                player1.lvl = 11
-                player1.dmg += 5
+            if player1.xp >= max_xp_lvl and player1.lvl != 6:
+                if player1.lvl < 6:
+                    player1.lvl = 6
+                    player1.dmg += 5
+                    player1.xp = 0
+                    max_xp_lvl += 200
                 
-            if player1.xp >= 2250 and player1.lvl != 12: 
-                player1.xp = 0
-                player1.lvl = 12
-                player1.dmg += 5
+            if player1.xp >= max_xp_lvl and player1.lvl != 7:
+                if player1.lvl < 7:
+                    max_xp_lvl += 200
+                    player1.lvl = 7
+                    player1.dmg += 5
+                    player1.xp = 0
+                
+            if player1.xp >= max_xp_lvl and player1.lvl != 8:
+                if player1.lvl < 8:
+                    player1.lvl = 8
+                    player1.dmg += 5
+                    player1.xp = 0
+                    max_xp_lvl += 200
 
-            if player1.xp >= 2450 and player1.lvl != 13:
-                player1.xp = 0
-                player1.lvl = 13
-                player1.dmg += 5
+            if player1.xp >= max_xp_lvl and player1.lvl != 9:
+                if player1.lvl < 9:
+                    player1.lvl = 9
+                    player1.dmg += 5
+                    player1.xp = 0
+                    max_xp_lvl += 200
 
+            if player1.xp >= max_xp_lvl and player1.lvl != 10: 
+                if player1.lvl < 10:
+                    player1.lvl = 10
+                    player1.dmg += 5
+                    player1.xp = 0
+                    max_xp_lvl += 200
+
+            if player1.xp >= max_xp_lvl and player1.lvl != 11:
+                if player1.lvl < 11:
+                    max_xp_lvl += 200
+                    player1.lvl = 11
+                    player1.dmg += 5
+                    player1.xp = 200
+
+            if player1.xp >= max_xp_lvl and player1.lvl != 12: 
+                if player1.lvl < 12:
+                    max_xp_lvl += 200
+                    player1.lvl = 12
+                    player1.dmg += 5
+                    player1.xp = 0
+                
+            if player1.xp >= max_xp_lvl and player1.lvl != 13:
+                if player1.lvl < 13:
+                    max_xp_lvl += 200
+                    player1.lvl = 13
+                    player1.dmg += 5
+                    player1.xp = 0
+                
         else:
-            player1.image = transform.scale(image.load('player_R.png'), (100, 50))
+            player1.image = transform.scale(image.load('images/player_R.png'), (100, 50))
 
         if tree.hp <= 0:
             now_tree = randint(1, max_tree)
-            kill_tree += 1
+            mixer.music.load('sounds/kill_tree.ogg')
+            mixer.music.play(1)
+            kill_tree += 1     
             #texture trees  randomizes  
             if now_tree == 1:
-                tree.image = transform.scale(image.load('Tree_lvl_1.png'), (100, 50))
+                tree.image = transform.scale(image.load('images/Tree_lvl_1.png'), (100, 50))
             if now_tree == 2:
-                tree.image = transform.scale(image.load('Tree_lvl_2.png'), (100, 50))
+                tree.image = transform.scale(image.load('images/Tree_lvl_2.png'), (100, 50))
             if now_tree == 3:
-                tree.image = transform.scale(image.load('Tree_lvl_3.png'), (100, 50))
+                tree.image = transform.scale(image.load('images/Tree_lvl_3.png'), (100, 50))
             if now_tree == 4:
-                tree.image = transform.scale(image.load('Tree_lvl_4.png'), (100, 50))
+                tree.image = transform.scale(image.load('images/Tree_lvl_4.png'), (100, 50))
             if now_tree == 5:
-                tree.image = transform.scale(image.load('Tree_lvl_5.png'), (100, 50))
+                tree.image = transform.scale(image.load('images/Tree_lvl_5.png'), (100, 50))
 
             #tree settings drop
             tree.xp = tree_xp_lvl
@@ -264,6 +298,12 @@ while game:
             tree.hp = randint(min_hp_lvl, max_hp_lvl)
             money += money_drop_lvl
             player1.xp += tree.xp
+            
+            if kill_tree >= 101:
+                kill_boss = True
+
+            else:
+                kill_boss = False
 
         #shop button
         if btn_shop.draw(window):
@@ -274,7 +314,7 @@ while game:
                 if buy == True:
                     if money >= 25 and player1.lvl == 2:
                         player1.dmg += 2
-                        player_axe_images.remove("player_axe_lvl_1.png")
+                        player_axe_images.remove("images/player_axe_lvl_1.png")
                         money -= 25
                         kill_tree = 0
                         buy = False
@@ -294,7 +334,7 @@ while game:
                     if money >= 250:
                         cd = 1100
                         player1.dmg += 5
-                        player_axe_images.remove("player_axe_lvl_2.png")
+                        player_axe_images.remove("images/player_axe_lvl_2.png")
                         money -= 250
                         kill_tree = 0
                         buy2 = False
@@ -315,7 +355,7 @@ while game:
                     if money >= 500:
                         cd = 1000
                         player1.dmg += 8
-                        player_axe_images.remove("player_axe_lvl_3.png")
+                        player_axe_images.remove("images/player_axe_lvl_3.png")
                         money -= 500
                         kill_tree = 0
                         buy3 = False
@@ -335,7 +375,7 @@ while game:
 
                     if money >= 750:
                         player1.dmg += 11
-                        player_axe_images.remove("player_axe_lvl_4.png")
+                        player_axe_images.remove("image/player_axe_lvl_4.png")
                         money -= 750
                         kill_tree = 0
                         buy4 = False
@@ -355,7 +395,7 @@ while game:
                     if money >= 1000:
                         cd = 800
                         player1.dmg += 15
-                        player_axe_images.remove("player_axe_lvl_5.png")
+                        player_axe_images.remove("images/player_axe_lvl_5.png")
                         money -= 1000
                         kill_tree = 0
                         buy5 = False
@@ -374,7 +414,7 @@ while game:
                 open =False
 
         if btn_lvl_1.draw(window):
-            tree_xp_lvl = 10
+            tree_xp_lvl = 200
             min_hp_lvl = 5
             max_hp_lvl = 10
             money_drop_lvl = 5
@@ -422,30 +462,42 @@ while game:
             else:
                 error_lvl_5 = font.render('You not unlocked this lvl.You must kill 80 trees', 1, (255, 0, 0))
                 window.blit(error_lvl_5, (200, 200))
-
+        #lvl boss
         if btn_lvl_boss.draw(window):
             if kill_tree >= 100:
                 tree_xp_lvl = 350
-                min_hp_lvl = 500
-                max_hp_lvl = 1500
+                min_hp_lvl = 750
+                max_hp_lvl = 2000
                 money_drop_lvl = 500
+                last_life = True
+                
 
             else:
                 error_lvl_boss = font.render('You not unlocked this lvl.You must kill 100 trees', 1, (255, 0, 0))
                 window.blit(error_lvl_boss, (200, 200))
+        #if kill boss
+        if last_life == True:
+            lvl_boss_time = font.render('Time kill boss:' + str(time_kill_boss_tracker), 1, (255, 0, 0))
+            window.blit(lvl_boss_time, (500, 140))
+
+
 
             time_kill_boss_tracker += clock.get_time()
 
-            if time_kill_boss_tracker > 5000:
+            if time_kill_boss_tracker > 15000:
                 time_kill_boss_tracker = 0
-                if tree_xp >= 0:
+                
+                if kill_boss == True:
+                    game_over = font.render('You win', 1, (255, 0, 0))
+                    window.blit(game_over, (200, 200))
+                    time.sleep(15)
+                    game = False
+
+                if kill_boss == False:
                     game_over = font.render('You losse', 1, (255, 0, 0))
                     window.blit(game_over, (200, 200))
-                    time.sleep(5)
+                    time.sleep(15)
                     game = False
-            
-            lvl_boss_time = font.render('Time kill boss:' + str(time_kill_boss_tracker), 1, (255, 0, 0))
-            window.blit(lvl_boss_time, (200, 200))
 
     else:
         #menu game

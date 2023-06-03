@@ -30,11 +30,11 @@ class Player(GameSprite):
 
     def update(self):
         keys_pressed = key.get_pressed()
-        if keys_pressed[K_LEFT] and self.rect.x > 5:
+        if keys_pressed[K_LEFT] or keys_pressed[K_a] and self.rect.x > 5:
             self.image = transform.scale(image.load('images/player_L.png'), (100, 50))
             self.rect.x -= self.speed
 
-        if keys_pressed[K_RIGHT] and self.rect.x < 700:
+        if keys_pressed[K_RIGHT] or keys_pressed[K_d] and self.rect.x < 700:
             self.image = transform.scale(image.load('images/player_R.png'), (100, 50))
             self.rect.x += self.speed
 
@@ -186,6 +186,7 @@ while game:
             if sprite.collide_rect(player1, tree):
                 tree.hp -= player1.dmg
                 player1.attack = False
+                
             #lvl uping system
             if player1.xp >= max_xp_lvl and player1.lvl != 2:
                 if player1.lvl < 2:
@@ -480,8 +481,6 @@ while game:
             lvl_boss_time = font.render('Time kill boss:' + str(time_kill_boss_tracker), 1, (255, 0, 0))
             window.blit(lvl_boss_time, (500, 140))
 
-
-
             time_kill_boss_tracker += clock.get_time()
 
             if time_kill_boss_tracker > 15000:
@@ -509,6 +508,7 @@ while game:
             game = False
 
         if btn_sound.draw(window):
+            mixer.music.load("sounds/forest_sounds.ogg")
             mixer.music.play(-1)
 
         if btn_mute.draw(window):
